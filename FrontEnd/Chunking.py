@@ -70,7 +70,6 @@ def chunking(next_page, prev_page):
                     chunks = ChunkingStrategies.fixedChunking(content, chunkSize, chunkOverlap)
 
                 if chunking_strategy != "":
-                    st.write(f"**Total chunks:** {len(chunks)}")
                     colors = [
                         "red", "orange", "yellow", "green", "blue", "indigo", "violet",
                         "teal", "magenta", "brown", "gold", "lime", "navy", "coral"
@@ -109,6 +108,10 @@ def chunking(next_page, prev_page):
                             final_chunks.append(chunk.page_content)
                     st.session_state["chunks"] = embed_chunks
                     df = pd.DataFrame({"Chunk": final_chunks})
+                    st.session_state["df"] = df 
+                    st.session_state["final_chunks"] = final_chunks 
+                    
+                     # Store the DataFrame in session state
                     #st.markdown(df.to_html(escape=False), unsafe_allow_html=True)
                         #st.markdown(final_chunks, unsafe_allow_html=True)
                     
@@ -128,25 +131,9 @@ def chunking(next_page, prev_page):
             #else:
             #    st.write(content)
                     # Pagination
-                    page_size = 10
-                    chunks = [df[p:p + page_size] for p in range(0, len(df), page_size)]
-
-                    if 'table_page' not in st.session_state:
-                        st.session_state.table_page = 0
-
-                    col1, col2 = st.columns([1, 1])
-
-                    with col1:
-                        if st.button("←"):
-                            st.session_state.table_page = max(0, st.session_state.table_page - 1)
-
-                    with col2:
-                        if st.button("→"):
-                            st.session_state.table_page = min(len(chunks) - 1, st.session_state.table_page + 1)
-
-                    st.markdown(chunks[st.session_state.table_page].to_html(escape=False), unsafe_allow_html=True)
-
-                    st.write(f"Page {st.session_state.table_page + 1} of {len(chunks)}")
+        if 'df' in st.session_state:
+            table_page()
+            #cssGrid()              
 
     col1, col2, col3 = st.columns([1,9,1])
     with col1:
@@ -155,3 +142,63 @@ def chunking(next_page, prev_page):
     with col3:
         if st.button("Next ➡️", key="next2"):
             next_page()
+
+def cssGrid():
+    final_chunks= st.session_state["final_chunks"]
+    st.markdown("""
+                <style>
+                .scroll-box {
+                    border: 1px solid #ccc;
+                    padding: 8px;
+                    height: 80px;
+                    width: 100%;
+                    overflow-y: scroll;
+                    background-color: #F0F0F0;
+                    color: #000000;
+                    font-family: monospace;
+                    white-space: pre-wrap;
+                    border-radius: 6px;
+                    margin-bottom: 10px;
+                }
+                </style>
+            """, unsafe_allow_html=True)
+    items_per_page = 10
+    total_pages = (len(final_chunks) - 1) // items_per_page + 1
+    if 'table_page' not in st.session_state:
+        st.session_state.table_page = 0
+            #with right:
+    col1, col2 = st.columns([1, 1])
+    with col1:
+        if st.button(":arrow_left: Prev") and st.session_state.table_page > 0:
+            st.session_state.table_page -= 1
+    with col2:
+        if st.button("Next :arrow_right:") and st.session_state.table_page < total_pages - 1:
+            st.session_state.table_page += 1
+    st.write(f"Page {st.session_state.table_page + 1} of {total_pages}")
+    start = st.session_state.table_page * items_per_page
+    end = start + items_per_page
+    current_chunks = final_chunks[start:end]
+    for c in current_chunks:
+        st.markdown(f'<div class="scroll-box">{c}</div>', unsafe_allow_html=True)
+
+def table_page():
+    df = st.session_state["df"]
+    #df.index += 1
+    page_size = 10
+    chunks = [df[p:p + page_size] for p in range(0, len(df), page_size)]
+
+    if 'table_page' not in st.session_state:
+        st.session_state.table_page = 0
+
+    col1, col2, col3 = st.columns([1, 1, 1])
+
+    with col1:
+        if st.button("←"):
+            st.session_state.table_page = max(0, st.session_state.table_page - 1)
+    with col2:
+        st.write(f"Page {st.session_state.table_page + 1} of {len(chunks)}")
+    with col3:
+        if st.button("→"):
+            st.session_state.table_page = min(len(chunks) - 1, st.session_state.table_page + 1)
+    st.write(f"**Total chunks:** {len(df)}")
+    st.markdown(chunks[st.session_state.table_page].to_html(escape=False,justify='left'), unsafe_allow_html=True)
