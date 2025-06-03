@@ -28,7 +28,10 @@ def embedding(next_page,prev_page):
 
     EmbeddingStrategies.trigger_embeddings(model,query)
 
-    if st.button("⬅️ Back", key="back3"):
-        prev_page()    with col3:
-    if st.button("Next ➡️", key="next3"):
-        next_page()
+    col1, col2, col3 = st.columns([1,9,1])
+    with col1:
+        if st.button("⬅️ Back", key="back3"):
+            prev_page()
+    with col3:
+        if st.button("Next ➡️", key="next3"):
+            next_page()
