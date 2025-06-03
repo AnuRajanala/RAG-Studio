@@ -4,7 +4,7 @@ import numpy as np
 import io
 
 from BackEnd import EmbeddingStrategies
-def embedding(prev_page):
+def embedding(next_page,prev_page):
 
     #st.header("Step 3: Embedding Generator")
     st.title("Embedding Generator")
@@ -29,4 +29,6 @@ def embedding(prev_page):
     EmbeddingStrategies.trigger_embeddings(model,query)
 
     if st.button("⬅️ Back", key="back3"):
-        prev_page()
+        prev_page()    with col3:
+    if st.button("Next ➡️", key="next3"):
+        next_page()
