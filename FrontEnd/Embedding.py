@@ -2,15 +2,24 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import io
+import time
 
 from BackEnd import EmbeddingStrategies
+from FrontEnd import Visualize
+
+def initialize():
+    if "query" not in st.session_state:
+        st.session_state.query = ""
+    if "model" not in st.session_state:
+        st.session_state.model = ""
+    if "embeddings" not in st.session_state:
+        st.session_state["embeddings"] = ""
+    if "query_embedding" not in st.session_state:
+        st.session_state["query_embedding"] = ""
+
 def embedding(next_page,prev_page):
-
-    #st.header("Step 3: Embedding Generator")
-    st.title("Embedding Generator")
-    st.markdown("Embed document chunks and a user query using a selected Cohere model.")
-
-    # ---------------------- UI Inputs ----------------------
+    st.header("Step 3: Embeddings Generator")
+    st.markdown("Embed the input user query along with the document chunks using a selected Cohere model.")
 
     # Model selection
     embedding_models = [
@@ -20,13 +29,47 @@ def embedding(next_page,prev_page):
         "embed-multilingual-v3.0",
         "embed-multilingual-light-v3.0"
     ]
-    model = st.selectbox("🔎 Select Embedding Model", embedding_models)
-
     # User query input
     st.subheader("💬 User Query")
-    query = st.text_input("Enter your query to embed", placeholder="e.g., What does Cohere do?")
+    st.session_state.query = st.text_input("Enter your query to embed", placeholder="e.g., What does Cohere do?")
 
-    EmbeddingStrategies.trigger_embeddings(model,query)
+    st.subheader("🔎 Embedding Model")
+    st.session_state.model = st.selectbox("Select embedding model to be used to generate embeddings", embedding_models)
+     
+
+    if st.button("Generate and View"):
+        if st.session_state.query.strip(): 
+            progress_text = "Loading... Please wait."
+            my_bar = st.progress(0, text=progress_text)
+
+            for percent_complete in range(100):
+                time.sleep(0.01)
+                my_bar.progress(percent_complete + 1, text=progress_text)
+            time.sleep(1)
+            my_bar.empty()
+
+            tab1, tab2 = st.tabs(["Projection", "Vectors"])
+            css = '''
+                <style>
+                .stTabs [data-baseweb="tab-list"] button [data-testid="stMarkdownContainer"] p {
+                font-size:1.5rem;
+                }
+                </style>
+                '''
+            st.markdown(css, unsafe_allow_html=True)
+            with tab1:
+                co = EmbeddingStrategies.config()   
+                EmbeddingStrategies.embedChunks(co)               
+                EmbeddingStrategies.embedQuery(co)
+                Visualize.initialize()
+                Visualize.visualize()
+            with tab2:
+                EmbeddingStrategies.generate_chunk_embeddings()
+                EmbeddingStrategies.generate_query_embeddings()
+        else:
+            st.warning("⚠️ Please enter a user query to generate its embedding.")
+
+
 
     col1, col2, col3 = st.columns([1,9,1])
     with col1:

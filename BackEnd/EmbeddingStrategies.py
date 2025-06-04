@@ -2,58 +2,68 @@ import streamlit as st
 import cohere
 import requests
 
-def generate_embeddings(model,query):
-    # ---------------------- Configuration ----------------------
+
+def config():  
     COHERE_API_KEY = "eajAVMOvK5KtezTFd3AkOMSxbBePgkLuS0GFa2HF"
     co = cohere.Client(COHERE_API_KEY)
+    return co
 
-    #model: str, chunks: list[str], query: str
-    
-    #st.set_page_config(page_title="Embedding Generator", layout="centered")
-    
+
+def embedChunks(co):
+    # Embed chunks
+    """Embed document chunks and user query, store in session, and display."""
+    input_type = "text" if st.session_state.model == "embed-english-light-v2.0" else "search_document"
 
     # Retrieve chunks from session (optional fallback)
     chunks = st.session_state.get("chunks", [])
-
-    # ---------------------- Main Method ----------------------
-
-
-    """Embed document chunks and user query, store in session, and display."""
-    input_type = "text" if model == "embed-english-light-v2.0" else "search_document"
-
-    # Embed chunks
     if chunks:
-        chunk_response = co.embed(texts=chunks, model=model, input_type=input_type)
+        chunk_response = co.embed(texts=chunks, model=st.session_state.model, input_type=input_type)
         chunk_embeddings = chunk_response.embeddings
-        st.session_state["embeddings"] = chunk_embeddings
+        st.session_state["embeddings"] = chunk_embeddings 
 
-        st.subheader("📌 Chunk Embeddings")
-        for i, (chunk, embedding) in enumerate(zip(chunks, chunk_embeddings)):
+
+def embedQuery(co):
+    # Embed query
+    input_type = "text" if st.session_state.model == "embed-english-light-v2.0" else "search_document"
+
+    if st.session_state.query.strip():   
+        query_input_type = "search_query" if input_type == "search_document" else input_type
+        query_response = co.embed(texts=[st.session_state.query], model=st.session_state.model, input_type=query_input_type)
+        query_embedding = query_response.embeddings
+        st.session_state["query_embedding"] = query_embedding
+
+
+def generate_chunk_embeddings():
+    if st.session_state.chunks:
+        st.subheader("📌 Source Embeddings")
+        for i, (chunk, embedding) in enumerate(zip(st.session_state.chunks, st.session_state["embeddings"])):
             with st.expander(f"Chunk {i+1}"):
                 st.text_area("Text", chunk, height=80, disabled=True)
                 st.json(embedding)
     else:
         st.info("ℹ️ No chunks provided. Only query embedding will be generated.")
 
-    # Embed query
-    if query.strip():
-        query_input_type = "search_query" if input_type == "search_document" else input_type
-        query_response = co.embed(texts=[query], model=model, input_type=query_input_type)
-        query_embedding = query_response.embeddings[0]
-        st.session_state["query_embedding"] = query_embedding
-
+    
+def generate_query_embeddings():    
+    if st.session_state.query.strip(): 
         st.subheader("🔍 Query Embedding")
-        st.text_area("Query", query, height=80, disabled=True)
-        st.json(query_embedding)
+        st.text_area("Query", st.session_state.query, height=80, disabled=True)
+        st.json(st.session_state.query_embedding)
     else:
         st.warning("⚠️ Please enter a user query to generate its embedding.")
 
-# ---------------------- Trigger ----------------------
-def trigger_embeddings(model,query):
+
+def trigger_embeddings():
     if st.button("🚀 Generate Embeddings"):
         with st.spinner("Generating embeddings..."):
             try:
-                generate_embeddings(model,query)
+                co = config()
+                if co is None:
+                    return
+                embedChunks(co)
+                generate_chunk_embeddings()
+                embedQuery(co)
+                generate_query_embeddings()
             except requests.exceptions.HTTPError as e:
                 st.error(f"❌ HTTP error from Cohere API: {e}")
             except Exception as e:
