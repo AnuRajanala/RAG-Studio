@@ -7,7 +7,7 @@ import Ingest
 import Embedding
 import SimilaritySearches
 
-pages = ["Ingestion", "Chunking", "Embedding","SimilaritySearches"]
+pages = ["Ingestion", "Chunking", "Embedding", "SimilaritySearches"]
 
 st.set_page_config(layout="wide",page_title="RAG Studio", page_icon=":red_circle:" )  
 # Step/page initialization

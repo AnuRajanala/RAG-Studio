@@ -14,50 +14,46 @@ def initialize():
     if "chunking_strategy" not in st.session_state:
         st.session_state.chunking_strategy = ""
 
-def longest_palindrome(s):
-    def expand_around_center(s, left, right):
-        while left >= 0 and right < len(s) and s[left] == s[right]:
-            left -= 1
-            right += 1
-        return s[left + 1:right]
+def common_substring(statement1, statement2):
+    for i in range(len(statement1), 0, -1):
+        substring = statement1[-i:]
+        if statement2.startswith(substring):
+            return substring
+    return ""
 
-    longest = ""
-    for i in range(len(s)):
-        # odd length palindrome
-        odd_palindrome = expand_around_center(s, i, i)
-        if len(odd_palindrome) > len(longest):
-            longest = odd_palindrome
-
-        # even length palindrome
-        even_palindrome = expand_around_center(s, i, i + 1)
-        if len(even_palindrome) > len(longest):
-            longest = even_palindrome
-
-    return longest
-
-def reverseWords(s):
-    
-    words = s.split()
-    reversed_words = [word[::-1] for word in words]
-    return ' '.join(reversed_words)
 
 def chunking(next_page, prev_page):
     st.header("Step 2: Chunking Strategy")
     #st.subheader("Select a Strategy")
     panel1, panel2, panel3 = st.columns(spec=[0.4,0.1,0.5],vertical_alignment="center", border=False)
     with panel1:
-        with st.form('chunk'):
-            chunking_strategy = st.selectbox('Select a Strategy:', ['Recursive', 'Semantic', 'Fixed'])
+        chunking_strategy = st.selectbox('Select a Strategy:', ['Recursive', 'Semantic', 'Fixed'])
+        #with st.form('chunk'):
+        embeddingStrategy = ''
+        if chunking_strategy == 'Semantic':
+            embedding_models = [
+                    "embed-english-light-v2.0",
+                    "embed-english-light-v3.0",
+                    "embed-english-v3.0",
+                    "embed-multilingual-v3.0",
+                    "embed-multilingual-light-v3.0"
+                ]
+            embeddingStrategy = st.selectbox('Select an Embedding Strategy:', embedding_models)
+        else:
             chunkSize = st.number_input("Chunk Size", value=0)
             chunkOverlap = st.number_input("Chunk Overlap", value=0)
-            submitted = st.form_submit_button('Submit',use_container_width=True)
+            if chunkOverlap > chunkSize:
+                st.error("Chunk overlap must be less than Chunk Size")
+                submitted = st.button('Submit',use_container_width=True, disabled=True)
+            else:
+                submitted = st.button('Submit',use_container_width=True)
     with panel2:
         if submitted:
             st.markdown("<h1 style='text-align: center;'>&rarr;</h1>", unsafe_allow_html=True)
     with panel3:
         if submitted:
             st.session_state.chunking_strategy = chunking_strategy
-            #st.write(f'You chose {chunking_strategy}, chunk size={chunkSize}, chunk overlap={chunkOverlap}')
+            st.session_state.embeddingStrategy = embeddingStrategy
         
             st.info(st.session_state.uploaded_filename)
             content = st.session_state.uploaded_file_content
@@ -68,69 +64,47 @@ def chunking(next_page, prev_page):
                     chunks = ChunkingStrategies.recursiveChunking(content, chunkSize, chunkOverlap)
                 elif chunking_strategy == 'Fixed':
                     chunks = ChunkingStrategies.fixedChunking(content, chunkSize, chunkOverlap)
+                elif chunking_strategy == 'Semantic':
+                    chunks = ChunkingStrategies.semanticChunking(content, embeddingStrategy)
 
                 if chunking_strategy != "":
+                                        
+                    final_chunks=[]
+                    embed_chunks=[]
+                    checkOverlap=''
                     colors = [
                         "red", "orange", "yellow", "green", "blue", "indigo", "violet",
                         "teal", "magenta", "brown", "gold", "lime", "navy", "coral"
-                    ]
+                        ]
                     
-                    # Display DataFrame as a table
-                    words=[]
-                    final_chunks=[]
-                    embed_chunks=[]
                     for i, chunk in enumerate(chunks):
                         embed_chunks.append(chunk.page_content)
-                        if words and words[1] != '':
-                            chunk.page_content = f'<span style="color:red">{words[1]}</span>' + chunk.page_content[len(words[1]):]
-                            words=[]
-                            
-                        #color = colors[i % len(colors)]
+                        if chunking_strategy == 'Semantic':
+                            continue
+                        
+                        if checkOverlap != '':
+                            chunk.page_content = f'<span style="color:{color}">{checkOverlap}</span>' + chunk.page_content[len(checkOverlap):]
+
+                        color = colors[i % len(colors)]
+
                         if i < len(chunks) - 1:
-                            next_chunk = chunks[i + 1]
-                            #chunk_words = set(chunk.page_content.split())
-                            #next_chunk_words = set(next_chunk.page_content.split())
-                            
-                            overlap=chunk.page_content[-chunkOverlap:]
-                            overlap_reversed = "".join(reverseWords(overlap))
-                            overlapNext = next_chunk.page_content[:chunkOverlap] # get the last 10 characters of the current chunk
-                            isPalindrome = overlap_reversed+ '      '+(overlapNext)
-                            checkOverlap = longest_palindrome(isPalindrome)
-                            words=checkOverlap.split('      ')
-                            index = chunk.page_content.rfind(words[1].strip())
-                            if words[1] != '' and index != -1:
-                                # Color the substring
-                                final_chunks.append(chunk.page_content[:index] + f'<span style="color:red">{words[1]}</span>' + chunk.page_content[index + len(words[1]):])
-                            
+                            next_chunk = chunks[i + 1]                           
+                            checkOverlap = common_substring(chunk.page_content, next_chunk.page_content)
+                            index = chunk.page_content.rfind(checkOverlap)
+                            if checkOverlap != '' and index != -1:
+                                final_chunks.append(chunk.page_content[:index] + f'<span style="color:{color}">{checkOverlap}</span>' + chunk.page_content[index + len(checkOverlap):])
                             else:
                                 final_chunks.append(chunk.page_content)
                         else: 
                             final_chunks.append(chunk.page_content)
+
                     st.session_state["chunks"] = embed_chunks
+                    if chunking_strategy == 'Semantic':
+                        final_chunks = embed_chunks
                     df = pd.DataFrame({"Chunk": final_chunks})
                     st.session_state["df"] = df 
                     st.session_state["final_chunks"] = final_chunks 
                     
-                     # Store the DataFrame in session state
-                    #st.markdown(df.to_html(escape=False), unsafe_allow_html=True)
-                        #st.markdown(final_chunks, unsafe_allow_html=True)
-                    
-                    #df= pd.DataFrame({"Chunk" : final_chunks})
-                    #gb = GridOptionsBuilder.from_dataframe(df)
-                    #gb.configure_column("Chunk", header_name='Chunk', headerAlign="center", cellStyle={'textAlign': 'left'}, resizable=True)
-                    #, autoHeight=True,                     wrapText=True, suppressHeaderMenuButton=True)
-
-                    #gb.configure_column("No", headerName='No', width=50, pinned='left')
-                    #gb.configure_grid_options(domLayout='autoHeight')
-                    #gb.configure_pagination(enabled=True, paginationAutoPageSize=True, paginationPageSize=10)
-                    #gb.configure_first_column_as_index(suppressMenu=True,sortable=False)
-                    
-                    #grid_options = gb.build()
-                    
-                    #AgGrid(df, gridOptions=grid_options, enable_enterprise_modules=True, fit_columns_on_grid_load=True)
-            #else:
-            #    st.write(content)
-                    # Pagination
         if 'df' in st.session_state:
             table_page()
             #cssGrid()              
@@ -183,7 +157,6 @@ def cssGrid():
 
 def table_page():
     df = st.session_state["df"]
-    #df.index += 1
     page_size = 10
     chunks = [df[p:p + page_size] for p in range(0, len(df), page_size)]
 
@@ -201,4 +174,15 @@ def table_page():
         if st.button("→"):
             st.session_state.table_page = min(len(chunks) - 1, st.session_state.table_page + 1)
     st.write(f"**Total chunks:** {len(df)}")
-    st.markdown(chunks[st.session_state.table_page].to_html(escape=False,justify='left'), unsafe_allow_html=True)
+    current_chunk = chunks[st.session_state.table_page].copy()
+    start_index = st.session_state.table_page * page_size + 1
+    current_chunk.index = range(start_index, start_index + len(current_chunk))
+    st.markdown(current_chunk.to_html(escape=False, justify='left', classes='table'), unsafe_allow_html=True)
+    st.markdown("""
+        <style>
+            .table td:not(:first-child) {
+                word-wrap: break-word;
+                width: 100%;
+            }
+        </style>
+        """, unsafe_allow_html=True)

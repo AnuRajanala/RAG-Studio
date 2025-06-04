@@ -18,17 +18,25 @@ def initialize():
         st.session_state["query_embedding"] = ""
 
 def embedding(next_page,prev_page):
-    st.header("Step 3: Embeddings Generator")
-    st.markdown("Embed the input user query along with the document chunks using a selected Cohere model.")
+
+    st.title("Step 3: Embedding Generator")
+    st.markdown("Embed document chunks and a user query using a selected Cohere model.")
+
+    # ---------------------- UI Inputs ----------------------
 
     # Model selection
-    embedding_models = [
-        "embed-english-light-v2.0",
-        "embed-english-light-v3.0",
-        "embed-english-v3.0",
-        "embed-multilingual-v3.0",
-        "embed-multilingual-light-v3.0"
-    ]
+    if st.session_state.chunking_strategy == 'Semantic':
+        embedding_models = [st.session_state.embeddingStrategy]
+    else:
+        embedding_models = [
+            "embed-english-light-v2.0",
+            "embed-english-light-v3.0",
+            "embed-english-v3.0",
+            "embed-multilingual-v3.0",
+            "embed-multilingual-light-v3.0"
+        ]
+    model = st.selectbox("🔎 Select Embedding Model", embedding_models)
+
     # User query input
     st.subheader("💬 User Query")
     st.session_state.query = st.text_input("Enter your query to embed", placeholder="e.g., What does Cohere do?")
