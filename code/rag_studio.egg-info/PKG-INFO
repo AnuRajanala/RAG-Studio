@@ -1,0 +1,22 @@
+Metadata-Version: 2.4
+Name: rag-studio
+Version: 1.0
+Summary: RAG Studio is a Streamlit app for knowing the inner workings of RAG
+Description-Content-Type: text/markdown
+Requires-Dist: cohere==5.15.0
+Requires-Dist: langchain-community==0.3.14
+Requires-Dist: llama-index==0.12.40
+Requires-Dist: llama-index-embeddings-langchain==0.3.0
+Requires-Dist: llama-index-llms-oci-genai==0.4.0
+Requires-Dist: matplotlib==3.10.3
+Requires-Dist: oracledb==3.1.0
+Requires-Dist: pip==25.1.1
+Requires-Dist: plotly==6.1.2
+Requires-Dist: python-decouple==3.8
+Requires-Dist: scikit-learn==1.6.1
+Requires-Dist: streamlit==1.45.0
+Requires-Dist: tika==3.1.0
+Requires-Dist: markitdown==0.1.2
+Dynamic: description-content-type
+Dynamic: requires-dist
+Dynamic: summary
