@@ -4,3 +4,9 @@ RAG Studio Streamlit app installation and Running
 3. Ensure requirements.in contains all required dependencies to run the project.
 4. Run pip install -e .
 5. streamlit run FrontEnd\Main.py
+
+Note:
+1. If any files have new dependencies - please update requirements.in
+2. If File has pure Back end logic - keep in BackEnd folder
+    else
+    Keep in Front End Folder
