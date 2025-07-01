@@ -23,8 +23,11 @@ def ingest(next_page):
 
         # Try reading file content if it's a text file
         try:
-            parsed_file = parser.from_file(file)
-            uploaded_file_content = parsed_file['content']
+            #parsed_file = parser.from_file(file)
+            md = MarkItDown(enable_plugins=False)
+            result = md.convert(file)
+            uploaded_file_content = result.markdown
+            #uploaded_file_content = parsed_file['content']
 
             # Preprocess the text
             uploaded_file_content = uploaded_file_content.replace('\n', ' ')  # No change needed here, as '\n' is already a newline character
