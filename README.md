@@ -1,7 +1,7 @@
 RAG Studio Streamlit app installation and Running
 1. Checkout the git repo
 2. Navigate to Code
-3. Run pip install -e .
+3. Run pip install -e . (. is part of the command)
 4. streamlit run FrontEnd\Main.py
 
 Note:
