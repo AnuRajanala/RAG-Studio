@@ -10,7 +10,6 @@ from BackEnd import EmbeddingStrategies
 from BackEnd import ReduceEmbeddings
 from FrontEnd import Visualize
 from decimal import Decimal
-import LLMResponse
 
 st.set_page_config(layout="wide")
 def initialize():
