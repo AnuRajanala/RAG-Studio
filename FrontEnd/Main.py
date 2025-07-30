@@ -48,7 +48,7 @@ def pageRendering(next_page, prev_page):
         Embedding.embedding(next_page, prev_page)
         
     elif st.session_state.page == 3:
-        SimilaritySearches.perform_similarity_search(prev_page)
+        SimilaritySearches.perform_similarity_search(next_page,prev_page)
 
 st.title("RAG Studio")
 pageRendering(next_page, prev_page)
