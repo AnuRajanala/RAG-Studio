@@ -48,7 +48,7 @@ def plotting(reduced_embeddings, query_index):
     return df
 
 
-def custom_plotting(embeddings,query_embedding,reduced_embeddings, query_index):
+def custom_plotting(embeddings,query_embedding,reduced_embeddings, query_index,key_name):
     print("Plotting started...")
     # Create a DataFrame for Plotly
     df = pd.DataFrame(reduced_embeddings, columns=['Dimension 1', 'Dimension 2'])
@@ -73,5 +73,5 @@ def custom_plotting(embeddings,query_embedding,reduced_embeddings, query_index):
     # Display the Plotly figure
     col1, col2, col3 = st.columns([1,4,1])
     with col2:
-        clicked_point = st.plotly_chart(fig, use_container_width=True, key='plot')
+        clicked_point = st.plotly_chart(fig, use_container_width=True, key=key_name)
     return df
