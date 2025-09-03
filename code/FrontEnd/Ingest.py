@@ -46,7 +46,7 @@ def ingest(next_page):
             st.session_state.uploaded_file_content = "(Binary or unreadable file type)"
 
         st.success(f"Uploaded: {file.name}")
-        st.success(f"Uploaded: {st.session_state.uploaded_file_content}")
+        #st.success(f"Uploaded: {st.session_state.uploaded_file_content}")
     elif st.session_state.uploaded_filename:
         st.info(f"Previously uploaded: {st.session_state.uploaded_filename}")
 
