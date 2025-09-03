@@ -27,9 +27,9 @@ def barRendering(current, pages):
         if id == current:
             bar += f'<span style="padding:8px; color:white; background-color:blue; border-radius:8px; flex-grow:1; text-align:center;">{descr}</span>'
         else:
-            bar += f'<span style="padding:8px; color:white; flex-grow:1; text-align:center;">{descr}</span>'
+            bar += f'<span style="padding:8px; color:white; background-color:#5ea5f7; flex-grow:1; text-align:center; border-radius:8px;">{descr}</span>'
         if id != len(pages) - 1:
-            bar += '<span style="flex-grow:0; padding:0 8px; color:black;">→</span>'
+            bar += '<span style="flex-grow:0; padding:0 8px; color:grey;">→</span>'
     bar += '</div>'
     st.markdown(bar, unsafe_allow_html=True)
 
