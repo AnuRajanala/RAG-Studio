@@ -1,13 +1,6 @@
-import pandas as pd
-import oci
-import os,json
 import streamlit as st
 import cohere
 import requests
-import json
-import numpy as np
-from sklearn.manifold import TSNE
-from sklearn.decomposition import PCA
 
 def initialize():
     if "query_embedding" not in st.session_state:
