@@ -1,7 +1,7 @@
 import streamlit as st
 import numpy as np
 import pandas as pd
-from sklearn.neighbors import NearestNeighbors, RadiusNeighborsRegressor
+from sklearn.neighbors import NearestNeighbors
 from scipy.spatial import distance
 import CompareSearches
 import Embedding
