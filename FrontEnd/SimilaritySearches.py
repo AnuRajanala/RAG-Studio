@@ -33,13 +33,25 @@ def perform_similarity_search(next_page,prev_page):
         radius = st.number_input("Radius (for Range Search)",min_value=0.000, max_value=100.000,format="%.5f",help="Range search (also known as radius search) retrieves all vectors that lie within a specified distance (or similarity range) from a query vector.")
         enable_rerank = st.checkbox("Enable Reranking", value=False,help="Reranking is used to reorder or refine a set of initially retrieved results based on their relevance to a user's query, gives the most relevant responses to a particular query.")
         rerank_candidates = st.slider("Number of candidates for reranking", min_value=2, max_value=20, value=5,help="More candidates = better reranking but slower")
-        
-        submit_search = st.button("Submit", type="primary", use_container_width=True)
+        # Two action buttons
+        cola, colb = st.columns(2)
+
+        with cola:
+            submit_search = st.button("Submit", type="primary", use_container_width=True)
+
+        with colb:
+            compare_searches = st.button("Compare All", type="secondary", use_container_width=True)
+            
         if submit_search:
             with st.spinner("🔍 Generating Similarity Score..."):
                 query_vector = st.session_state["query_embedding"]
                 data = st.session_state["embeddings"]
-                perform_search(search,data, query_vector,topKValue,radius,enable_rerank,rerank_candidates)
+                perform_search_and_rerank(search,data, query_vector,topKValue,radius,enable_rerank,rerank_candidates)
+        if compare_searches:
+            with st.spinner("🔍 Comparing Searches..."):
+                query_vector = st.session_state["query_embedding"]
+                data = st.session_state["embeddings"]
+                CompareSearches.compare_searches(search_options,np.array(data), np.array(query_vector),topKValue,radius)
  
     col1, col2, col3 = st.columns([1,3,1])
     with col1:
@@ -106,7 +118,7 @@ def nearest_neighbor_search(search_type, data, query_vector, top_k, radius):
     st.session_state.llm_data["user_query"] = st.session_state.query
     return topk_embeddings
     
-def perform_search(search,data, query_vector,topKValue,radius,enable_rerank,rerank_candidates):
+def perform_search_and_rerank(search,data, query_vector,topKValue,radius,enable_rerank,rerank_candidates):
     topk_results = nearest_neighbor_search(search,data, query_vector,topKValue,radius)
     if enable_rerank and len(topk_results) > 1:
         st.write(f'<h5 style="text-align: center;">Top {topKValue} documents without reranking:</h5>', unsafe_allow_html=True)
