@@ -30,11 +30,11 @@ def chunking(next_page, prev_page):
         embeddingStrategy = ''
         if chunking_strategy == 'Semantic':
             embedding_models = [
-                    "embed-english-light-v2.0",
-                    "embed-english-light-v3.0",
-                    "embed-english-v3.0",
-                    "embed-multilingual-v3.0",
-                    "embed-multilingual-light-v3.0"
+                    "cohere.embed-english-v3.0",
+                    "cohere.embed-english-light-v3.0",
+                    "cohere.embed-multilingual-v3.0",
+                    "cohere.embed-multilingual-light-v3.0",
+                    "cohere.embed-english-light-v2.0"
                 ]
             embeddingStrategy = st.selectbox('Select an Embedding Strategy:', embedding_models)
             submitted = st.button('Submit',use_container_width=True)
@@ -209,7 +209,7 @@ def table_page():
             st.session_state.table_page = min(len(chunks) - 1, st.session_state.table_page + 1)
     st.write(f"**Total chunks:** {len(df)}")
     current_chunk = chunks[st.session_state.table_page].copy()
-    start_index = st.session_state.table_page * page_size + 1
+    start_index = st.session_state.table_page * page_size
     current_chunk.index = range(start_index, start_index + len(current_chunk))
     st.markdown(current_chunk.to_html(escape=False, justify='left', classes='table'), unsafe_allow_html=True)
     st.markdown("""
@@ -223,7 +223,7 @@ def table_page():
     end_index = start_index + page_size
     final_chunks = st.session_state["df"]
     current_chunks = final_chunks[start_index:end_index]
-    idx = start_index
+    idx = start_index + 1
     final_chunks = st.session_state["final_chunks"]
     current_chunks = final_chunks[start_index:end_index]
     for c in current_chunks:
