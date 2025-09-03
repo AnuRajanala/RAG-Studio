@@ -155,6 +155,41 @@ def cssGrid():
         st.markdown(f'<div class="scroll-box">{c}</div>', unsafe_allow_html=True)
 
 def table_page():
+    # ---- Stylish Chunk Card CSS with Left Border ----
+    st.markdown("""
+    <style>
+    .chunk-card {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+       
+        border: 1px solid #444444;
+        border-left: 6px solid #4a90e2; /* softer orange for dark bg */
+        border-radius: 8px;
+        padding: 10px 16px;
+        margin-bottom: 12px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.7);
+        
+        overflow-wrap: break-word;
+        word-break: break-word;
+    }
+    .chunk-index {
+        min-width: 30px;
+        margin-right: 12px;
+        font-weight: bold;
+        
+        color: #4a90e2; /* match border orange */
+    }
+    .chunk-text {
+        
+       
+        white-space: pre-wrap;
+        flex-grow: 1;
+        overflow-wrap: break-word;
+        word-break: break-word;
+    }
+    </style>
+""", unsafe_allow_html=True)
     df = st.session_state["df"]
     page_size = 10
     chunks = [df[p:p + page_size] for p in range(0, len(df), page_size)]
@@ -185,3 +220,18 @@ def table_page():
             }
         </style>
         """, unsafe_allow_html=True)
+    end_index = start_index + page_size
+    final_chunks = st.session_state["df"]
+    current_chunks = final_chunks[start_index:end_index]
+    idx = start_index
+    final_chunks = st.session_state["final_chunks"]
+    current_chunks = final_chunks[start_index:end_index]
+    for c in current_chunks:
+            index_html = f'<div class="chunk-index">{idx}</div>'
+            st.markdown(f"""
+                <div class="chunk-card">
+                    {index_html}
+                    <div class="chunk-text">{c}</div>
+                </div>
+            """, unsafe_allow_html=True)
+            idx+=1
