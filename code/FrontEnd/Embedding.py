@@ -29,11 +29,11 @@ def embedding(next_page,prev_page):
         embedding_models = [st.session_state.embeddingStrategy]
     else:
         embedding_models = [
-            "embed-english-v3.0",
-            "embed-english-light-v3.0",
-            "embed-multilingual-v3.0",
-            "embed-multilingual-light-v3.0",
-            "embed-english-light-v2.0"
+            "cohere.embed-english-v3.0",
+            "cohere.embed-english-light-v3.0",
+            "cohere.embed-multilingual-v3.0",
+            "cohere.embed-multilingual-light-v3.0",
+            "cohere.embed-english-light-v2.0"
         ]
     #model = st.selectbox("🔎 Select Embedding Model", embedding_models)
 
