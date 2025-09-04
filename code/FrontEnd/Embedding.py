@@ -5,7 +5,7 @@ import io
 import time
 
 from BackEnd import EmbeddingStrategies
-import Visualize
+from FrontEnd import Visualize
 
 def initialize():
     if "query" not in st.session_state:
@@ -16,6 +16,9 @@ def initialize():
         st.session_state["embeddings"] = ""
     if "query_embedding" not in st.session_state:
         st.session_state["query_embedding"] = ""
+
+def callVisualize():
+    st.session_state.is_plotted = Visualize.visualize()  
 
 def embedding(next_page,prev_page):
 
@@ -37,52 +40,43 @@ def embedding(next_page,prev_page):
         ]
     #model = st.selectbox("🔎 Select Embedding Model", embedding_models)
 
+    st.subheader("🔎 Embedding Model")
+    st.session_state.model = st.selectbox("Select embedding model to be used to generate embeddings", embedding_models)
+
     # User query input
     st.subheader("💬 User Query")
     st.session_state.query = st.text_input("Enter your query to embed", placeholder="e.g., What does Cohere do?")
 
-    st.subheader("🔎 Embedding Model")
-    st.session_state.model = st.selectbox("Select embedding model to be used to generate embeddings", embedding_models)
-     
 
-    if st.button("Generate and View"):
-        if st.session_state.query.strip(): 
-            progress_text = "Loading... Please wait."
-            my_bar = st.progress(0, text=progress_text)
 
-            for percent_complete in range(100):
-                time.sleep(0.01)
-                my_bar.progress(percent_complete + 1, text=progress_text)
-            time.sleep(1)
-            my_bar.empty()
+    if st.session_state.query.strip(): 
 
-            tab1, tab2 = st.tabs(["Projection", "Vectors"])
-            css = '''
-                <style>
-                .stTabs [data-baseweb="tab-list"] button [data-testid="stMarkdownContainer"] p {
-                font-size:1.5rem;
-                }
-                </style>
-                '''
-            st.markdown(css, unsafe_allow_html=True)
-            with tab1:
-                co = EmbeddingStrategies.config()   
-                EmbeddingStrategies.embedChunks(co)               
-                EmbeddingStrategies.embedQuery(co)
-                Visualize.initialize()
-                Visualize.visualize()
-            with tab2:
-                EmbeddingStrategies.generate_chunk_embeddings()
-                EmbeddingStrategies.generate_query_embeddings()
-        else:
-            st.warning("⚠️ Please enter a user query to generate its embedding.")
+        tab1, tab2 = st.tabs(["Projection", "Vectors"])
+        css = '''
+            <style>
+            .stTabs [data-baseweb="tab-list"] button [data-testid="stMarkdownContainer"] p {
+            font-size:1.5rem;
+            }
+            </style>
+            '''
+        st.markdown(css, unsafe_allow_html=True)
+        with tab1:
+            co = EmbeddingStrategies.config()   
+            EmbeddingStrategies.embedChunks(co)               
+            EmbeddingStrategies.embedQuery(co)
+            callVisualize()
+        with tab2:
+            EmbeddingStrategies.generate_chunk_embeddings()
+            EmbeddingStrategies.generate_query_embeddings()
+    else:
+        st.warning("⚠️ Please enter a user query to generate its embedding.")
 
 
 
-    col1, col2, col3 = st.columns([1,9,1])
-    with col1:
-        if st.button("⬅️ Back", key="back3"):
-            prev_page()
-    with col3:
-        if st.button("Next ➡️", key="next3"):
-            next_page()
+        col1, col2, col3 = st.columns([1,9,1])
+        with col1:
+            if st.button("⬅️ Back", key="back3"):
+                prev_page()
+        with col3:
+            if st.button("Next ➡️", key="next3"):
+                next_page()
