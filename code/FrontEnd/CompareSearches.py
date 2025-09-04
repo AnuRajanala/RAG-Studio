@@ -4,7 +4,7 @@ import pandas as pd
 from sklearn.neighbors import NearestNeighbors
 from scipy.spatial import distance
 
-def compare_searches(search_options,data, query_vector,topKValue):
+def compare_searches(search_options,data, query_vector,topKValue,radius):
     catgory_new = []
     st.markdown('<h3 style="text-align: center;">{}</h3>'.format(f"Top {topKValue} Similar Vectors Comaprison:"), unsafe_allow_html=True)
     for search_type in search_options:
