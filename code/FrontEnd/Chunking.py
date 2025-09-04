@@ -211,15 +211,15 @@ def table_page():
     current_chunk = chunks[st.session_state.table_page].copy()
     start_index = st.session_state.table_page * page_size
     current_chunk.index = range(start_index, start_index + len(current_chunk))
-    st.markdown(current_chunk.to_html(escape=False, justify='left', classes='table'), unsafe_allow_html=True)
-    st.markdown("""
-        <style>
-            .table td:not(:first-child) {
-                word-wrap: break-word;
-                width: 100%;
-            }
-        </style>
-        """, unsafe_allow_html=True)
+    # st.markdown(current_chunk.to_html(escape=False, justify='left', classes='table'), unsafe_allow_html=True)
+    # st.markdown("""
+    #     <style>
+    #         .table td:not(:first-child) {
+    #             word-wrap: break-word;
+    #             width: 100%;
+    #         }
+    #     </style>
+    #     """, unsafe_allow_html=True)
     end_index = start_index + page_size
     final_chunks = st.session_state["df"]
     current_chunks = final_chunks[start_index:end_index]

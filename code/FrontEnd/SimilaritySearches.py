@@ -23,7 +23,7 @@ def initialize():
             "user_query": ""      # Default value for user_query
         }
         
-def perform_similarity_search(next_page,prev_page):
+def perform_similarity_search(prev_page): #removed extra parameter which is not required: Yojitha
     st.header("Step 5: Retrieval and Reranking of Top K Nearest Neighbors", divider=True)
     with st.container():
         search_options = ['Euclidean', 'Manhattan', 'Cosine','NaN_Euclidean']
@@ -57,10 +57,7 @@ def perform_similarity_search(next_page,prev_page):
     with col1:
         if st.button("⬅️ Back", key="back4"):
             prev_page()
-    with col3:
-        if st.button("Next ➡️", key="next4"):
-            next_page()
-            
+    #Removed next page logic
 def nearest_neighbor_search(search_type, data, query_vector, top_k, radius):
     data = np.array(data)
     query_vector = np.array(query_vector)  # Reshape query_vector to (1, 1024)
