@@ -122,3 +122,32 @@ def plotting(source_reduced, combined_reduced, query_index):
             'Datapoint': range(1, len(st.session_state.final_chunks) + 1),
             "Chunk": st.session_state.final_chunks})
         st.dataframe(chunks_df, hide_index=True)   
+
+#This function plots data points for TopK results.
+def custom_plotting(embeddings,query_embedding,reduced_embeddings, query_index,key_name):
+    print("Plotting started...")
+    # Create a DataFrame for Plotly
+    df = pd.DataFrame(reduced_embeddings, columns=['Dimension 1', 'Dimension 2'])
+    df['Type'] = ['Source Embeddings'] * query_index + ['Query Embedding'] * (len(reduced_embeddings) - query_index)
+    df['Index'] = range(1, len(reduced_embeddings) + 1)
+    df['Embedding'] = [str(embedding) for embedding in np.concatenate((embeddings, query_embedding))]
+    fig = px.scatter(
+        df, 
+        x='Dimension 1', 
+        y='Dimension 2', 
+        color='Type', 
+        color_discrete_map={'Source Embeddings': 'yellow', 
+                            'Query Embedding': 'red'}, 
+        hover_name='Index', 
+        hover_data=['Embedding'], 
+        text='Index')
+    
+    # Update the layout
+    fig.update_layout(title='Visualizing embeddings in 2D space', xaxis_title='Dimension 1', yaxis_title='Dimension 2')
+    fig.update_traces(textposition='top center')
+
+    # Display the Plotly figure
+    col1, col2, col3 = st.columns([1,4,1])
+    with col2:
+        clicked_point = st.plotly_chart(fig, use_container_width=True, key=key_name)
+    return df
