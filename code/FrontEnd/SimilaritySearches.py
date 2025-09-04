@@ -23,7 +23,7 @@ def initialize():
             "user_query": ""      # Default value for user_query
         }
         
-def perform_similarity_search(prev_page): #removed extra parameter which is not required: Yojitha
+def perform_similarity_search(next_page,prev_page): #removed extra parameter which is not required: Yojitha
     st.header("Step 5: Retrieval and Reranking of Top K Nearest Neighbors", divider=True)
     with st.container():
         search_options = ['Euclidean', 'Manhattan', 'Cosine','NaN_Euclidean']
