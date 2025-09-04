@@ -1,10 +1,13 @@
 import streamlit as st
+
+st.set_page_config(layout="wide",page_title="RAG Studio", page_icon=":red_circle:" ) 
 import Chunking
 import Ingest
 import Embedding
+import Visualize
 import SimilaritySearches
 
-st.set_page_config(layout="wide",page_title="RAG Studio", page_icon=":red_circle:" ) 
+
 pages = ["Ingestion", "Chunking", "Embedding", "SimilaritySearches"]
 
  
@@ -44,6 +47,8 @@ def pageRendering(next_page, prev_page):
         Chunking.chunking(next_page, prev_page)
 
     elif st.session_state.page == 2:
+        Embedding.initialize()
+        Visualize.initialize()
         Embedding.embedding(next_page, prev_page)
         
     elif st.session_state.page == 3:

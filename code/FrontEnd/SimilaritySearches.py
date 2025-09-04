@@ -11,7 +11,7 @@ from FrontEnd import Visualize
 from decimal import Decimal
 import CohereReranker
 
-st.set_page_config(layout="wide")
+# st.set_page_config(layout="wide") --Commenting this line as its causing conflict: Veena
 def initialize():
     if "embeddings" not in st.session_state:
         st.session_state["embeddings"] = ""
