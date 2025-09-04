@@ -17,7 +17,7 @@ COMPARTMENT_ID = "ocid1.compartment.oc1..aaaaaaaaltks2v7drnqi6rtik7frrl4kypg2jz7
 def config():
     # Read from default OCI config profile
     CONFIG_PROFILE = "DEFAULT"
-    oci_config = oci.config.from_file('C:/Users/ychavva/AITrial/.oci/config', CONFIG_PROFILE)
+    oci_config = oci.config.from_file('../config', CONFIG_PROFILE)
     client = GenerativeAiInferenceClient(config=oci_config, service_endpoint=ENDPOINT, retry_strategy=oci.retry.NoneRetryStrategy(), timeout=(10,240))
     return client
 
