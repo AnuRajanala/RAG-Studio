@@ -13,7 +13,7 @@ import CohereReranker
 def compare_searches(search_options,data, query_vector,topKValue,radius):
     catgory_new = []
     types_list = []
-    st.markdown('<h3 style="text-align: center;">{}</h3>'.format(f"Top {topKValue} Narest Neighbors Comaprison:"), unsafe_allow_html=True)
+    st.markdown('<h3 style="text-align: center;">{}</h3>'.format(f"Top {topKValue} Nearest Neighbors Comaprison:"), unsafe_allow_html=True)
     for search_type in search_options:
         catgory_new.append(search_type)
         types_list = compare_nearest_neighbor_searches(search_type,data, query_vector,topKValue,radius)
@@ -57,9 +57,9 @@ def compare_nearest_neighbor_searches(search_type,data, query_vector,topKValue,r
         within_radius_distances = nn_distances[0][within_radius_mask]
         within_radius_indices = indices[0][within_radius_mask]
         within_radius_data_points = data[within_radius_indices]
-        st.write(f"Found {len(within_radius_indices)} points within radius")
-        st.write(f"Data points within radius:\n{within_radius_data_points}") 
-        st.write(f"Distances of these points: {within_radius_distances}")   
+        #st.write(f"Found {len(within_radius_indices)} points within radius")
+        #st.write(f"Data points within radius:\n{within_radius_data_points}") 
+        #st.write(f"Distances of these points: {within_radius_distances}")   
         topk_embeddings = []
         topk_embeddings = within_radius_data_points
         updated_indices = within_radius_indices
