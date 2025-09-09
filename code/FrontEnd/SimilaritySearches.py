@@ -118,7 +118,7 @@ def nearest_neighbor_search(search_type, data, query_vector, top_k, radius):
 def perform_search_and_rerank(search,data, query_vector,topKValue,radius,enable_rerank,rerank_candidates):
     topk_results = nearest_neighbor_search(search,data, query_vector,topKValue,radius)
     if enable_rerank and len(topk_results) > 1:
-        st.write(f'<h5 style="text-align: center;">Top {topKValue} documents without reranking:</h5>', unsafe_allow_html=True)
+        st.write(f'<h5 style="text-align: center;">Top {topKValue} documents projection:</h5>', unsafe_allow_html=True)
         topKDocuments = st.session_state.llm_data["top_k_results"]
         for i, result in enumerate(topKDocuments):
                 st.write(f"<h6> Document {i + 1}.</h6> {result}\n", unsafe_allow_html=True)
