@@ -12,7 +12,8 @@ def initialize():
         }
         
 def config():  
-    COHERE_API_KEY = "Vi2dcrXuERFSLadpdwSC2lHclg7WFzXmyvA16LTW"
+    # User cohere key here
+    COHERE_API_KEY = ""
     co = cohere.Client(COHERE_API_KEY)
     return co
 
