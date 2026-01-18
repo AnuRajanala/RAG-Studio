@@ -1,7 +1,7 @@
 import streamlit as st
 import cohere
 
-COHERE_API_KEY = "3exNVoOunyTRZVh7zbEpbrSZaLVlvYfdLEyvBgRp"
+COHERE_API_KEY = ""
 co = cohere.Client(COHERE_API_KEY)
 
 
@@ -77,3 +77,4 @@ def generate_llm_response_page(prev_page):
     with col1:
         if st.button("⬅️ Back"):
             prev_page()
+
