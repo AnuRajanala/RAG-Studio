@@ -26,6 +26,8 @@ def ingest(next_page):
             #parsed_file = parser.from_file(file)
             md = MarkItDown(enable_plugins=False)
             result = md.convert(file)
+            if result is None:
+                raise ValueError("MarkItDown.convert() returned None. Check input type/format and converter support.")
             uploaded_file_content = result.markdown
             #uploaded_file_content = parsed_file['content']
 
@@ -42,7 +44,8 @@ def ingest(next_page):
             #st.session_state.uploaded_file_content = result.text_content
 
          
-        except Exception:
+        except Exception as e:
+            print(e)
             st.session_state.uploaded_file_content = "(Binary or unreadable file type)"
 
         st.success(f"Uploaded: {file.name}")

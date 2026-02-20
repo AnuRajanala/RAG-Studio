@@ -10,6 +10,9 @@ from oci.generative_ai_inference.generative_ai_inference_client import Generativ
 from oci.generative_ai_inference.models import EmbedTextDetails
 from oci.generative_ai_inference.models import OnDemandServingMode
 import requests
+import os
+import sys
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 ENDPOINT = "https://inference.generativeai.us-chicago-1.oci.oraclecloud.com"
 COMPARTMENT_ID = "ocid1.compartment.oc1..aaaaaaaaltks2v7drnqi6rtik7frrl4kypg2jz7ykkirwzbxgbbtzjsfnrrq"
@@ -17,7 +20,7 @@ COMPARTMENT_ID = "ocid1.compartment.oc1..aaaaaaaaltks2v7drnqi6rtik7frrl4kypg2jz7
 def config():
     # Read from default OCI config profile
     CONFIG_PROFILE = "DEFAULT"
-    oci_config = oci.config.from_file('../config', CONFIG_PROFILE)
+    oci_config = oci.config.from_file(profile_name=CONFIG_PROFILE)
     client = GenerativeAiInferenceClient(config=oci_config, service_endpoint=ENDPOINT, retry_strategy=oci.retry.NoneRetryStrategy(), timeout=(10,240))
     return client
 

@@ -102,7 +102,7 @@ def plotting(source_reduced, combined_reduced, query_index):
 
     indices = np.where(within_circle)[0]
 
-    chunks_within_circle = [st.session_state.final_chunks[i] for i in (indices)]
+    chunks_within_circle = [st.session_state.chunks[i] for i in (indices)]
 
     col1, col2, col3 = st.columns([5,0.1,4.5])
     with col1:
@@ -117,10 +117,10 @@ def plotting(source_reduced, combined_reduced, query_index):
             'Datapoint': indices + 1,
             "Chunk": chunks_within_circle})
         else:
-            st.write(f"**Total Chunks:** {len(st.session_state.final_chunks)}")
+            st.write(f"**Total Chunks:** {len(st.session_state.chunks)}")
             chunks_df = pd.DataFrame({
-            'Datapoint': range(1, len(st.session_state.final_chunks) + 1),
-            "Chunk": st.session_state.final_chunks})
+            'Datapoint': range(1, len(st.session_state.chunks) + 1),
+            "Chunk": st.session_state.chunks})
         st.dataframe(chunks_df, hide_index=True)   
 
 #This function plots data points for TopK results.

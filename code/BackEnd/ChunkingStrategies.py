@@ -1,11 +1,10 @@
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.text_splitter import CharacterTextSplitter as LangChainCharacterTextSplitter
-from langchain.schema import Document
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_text_splitters import CharacterTextSplitter as LangChainCharacterTextSplitter
+from langchain_core.documents import Document
 from llama_index.core.node_parser import SemanticSplitterNodeParser
 from llama_index.core import Document as LlamaDocument
 from llama_index.embeddings.langchain import LangchainEmbedding
 from langchain_community.embeddings import CohereEmbeddings
-from langchain.schema import Document as LCDocument
 import re
 import oci
 from langchain_community.embeddings.oci_generative_ai import OCIGenAIEmbeddings

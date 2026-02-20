@@ -1,0 +1,8 @@
+.git
+.vscode
+code/.oci
+code/.venv
+code/rag_studio.egg-info/
+code/config
+code/BackEnd/__pycache__
+code/FrontEnd/__pycache__

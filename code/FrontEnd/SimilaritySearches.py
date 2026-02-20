@@ -30,6 +30,7 @@ def perform_similarity_search(next_page,prev_page): #removed extra parameter whi
         search = st.selectbox('Choose Similarity Metric Type', options = search_options, index = 0, key="limited_dropdown",help="Similarity Metric is used to measure distance between vectors." )
         # (Number of Nearest Neighbors to retrieve)
         topKValue = st.slider('Top K/limit', 1, 20,1,help="This parameter specifies how many similar vectors to retrieve for a given query.")
+        st.session_state.topK = topKValue
         radius = st.number_input("Radius (for Range Search)",min_value=0.000, max_value=100.000,format="%.5f",help="Range search (also known as radius search) retrieves all vectors that lie within a specified distance (or similarity range) from a query vector.")
         enable_rerank = st.checkbox("Enable Reranking", value=False,help="Reranking is used to reorder or refine a set of initially retrieved results based on their relevance to a user's query, gives the most relevant responses to a particular query.")
         rerank_candidates = st.slider("Number of candidates for reranking", min_value=2, max_value=20, value=5,help="More candidates = better reranking but slower")
@@ -37,7 +38,7 @@ def perform_similarity_search(next_page,prev_page): #removed extra parameter whi
         cola, colb = st.columns(2)
 
         with cola:
-            submit_search = st.button("Submit", type="primary", use_container_width=True)
+            submit_search = st.button("Submit", type="secondary", use_container_width=True)
 
         with colb:
             compare_searches = st.button("Compare All", type="secondary", use_container_width=True)
@@ -55,9 +56,12 @@ def perform_similarity_search(next_page,prev_page): #removed extra parameter whi
  
     col1, col2, col3 = st.columns([1,3,1])
     with col1:
-        if st.button("⬅️ Back", key="back4"):
+        if st.button(":arrow_left: Back", key="back4"):
             prev_page()
-    #Removed next page logic
+    with col3:
+        if st.button("Next :arrow_right:", key="next3"):
+            next_page()
+
 def nearest_neighbor_search(search_type, data, query_vector, top_k, radius):
     data = np.array(data)
     query_vector = np.array(query_vector)  # Reshape query_vector to (1, 1024)
